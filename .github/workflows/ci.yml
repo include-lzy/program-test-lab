@@ -45,8 +45,14 @@ jobs:
 
       - name: Windows environment diag
         if: runner.os == 'Windows'
-        shell: bash
-        run: cmake --version
+        shell: pwsh
+        run: |
+          cmake --version
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          Write-Host "== vswhere VS instances =="
+          & $vswhere -products '*' -property installationPath
+          Write-Host "== cl on PATH =="
+          where.exe cl
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
