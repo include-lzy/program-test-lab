@@ -49,15 +49,12 @@ jobs:
         run: |
           cmake --version
           $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-          Write-Host "== vswhere VS instances =="
           & $vswhere -products '*' -property installationPath
-          Write-Host "== cl on PATH =="
-          where.exe cl
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
         shell: bash
-        run: cmake -S . -B build -G "Visual Studio 17 2022" -A x64
+        run: cmake -S . -B build -G "Visual Studio 18 2026" -A x64
 
       - name: Build
         run: cmake --build build --config Release
