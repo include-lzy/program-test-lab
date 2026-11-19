@@ -16,10 +16,12 @@ jobs:
             label: gcc
             cc: gcc
             cxx: g++
+            packages: build-essential
           - os: ubuntu-latest
             label: clang
             cc: clang
             cxx: clang++
+            packages: clang build-essential
           - os: windows-latest
             label: msvc
     runs-on: ${{ matrix.os }}
@@ -32,7 +34,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential clang cmake ninja-build
+          sudo apt-get install -y cmake ninja-build ${{ matrix.packages }}
 
       - name: Configure (Linux)
         if: runner.os == 'Linux'
