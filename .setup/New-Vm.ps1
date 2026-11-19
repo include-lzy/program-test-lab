@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   在 VirtualBox 中无人值守创建一台 Windows 基线虚拟机。
 .DESCRIPTION
