@@ -16,24 +16,36 @@ new-chat-2/
 |---|---|---|---|
 | ubuntu-latest | GCC 15（runner 默认） | Ninja | Linux 主链路 |
 | ubuntu-latest | Clang | Ninja | 第二编译器，排查语法/UB |
-| windows-latest | MSVC（Visual Studio 17 2022, x64） | VS 生成器 | Windows 编译器兼容 |
+| windows-latest | MSVC（Visual Studio 18 2026, x64，runner 预装） | VS 生成器 | Windows 编译器兼容 |
 
 工作流触发条件：push 到 main/master、提 Pull Request，或在 Actions 页面手动 `workflow_dispatch`。
 
-## 推送到 GitHub 后生效
+## 远端仓库与当前运行状态
 
-本机当前未安装 git，需要先装 git 并在 GitHub 建仓库，然后：
+- 远端仓库：`https://github.com/include-lzy/program-test-lab`（SSH remote `git@github.com:include-lzy/program-test-lab.git`）。
+- 本地 Git 2.56.0.4，分支 `main`，跟踪 `origin/main`。
+- 首次推送命令（已执行过，供参考）：
 
 ```bash
 git init
 git add .
 git commit -m "ci: add compiler matrix skeleton"
 git branch -M main
-git remote add origin <你的仓库地址>
+git remote add origin git@github.com:include-lzy/program-test-lab.git
 git push -u origin main
 ```
 
 推送后在仓库的 Actions 标签页查看三组作业是否全绿。
+
+### 最近一次 CI 实测结论（2026-11-19，run `aeef0a7`，run id `44507373838`，三组全绿）
+
+| 作业系统 | 编译器 | 结论 |
+|---|---|---|
+| ubuntu-latest | GCC | 通过（Configure / Build / Test 成功） |
+| ubuntu-latest | Clang | 通过（Configure / Build / Test 成功） |
+| windows-latest | MSVC | 通过（Configure / Build / Test 成功） |
+
+**Windows 组根因与修复（已验证）**：runner 镜像预装的是 Visual Studio 18 Enterprise（路径 `C:\Program Files\Microsoft Visual Studio\18\Enterprise`），而工作流最初写死生成器 `Visual Studio 17 2022`，CMake 探测不到 VS17 实例，Configure 报 `could not find any instance of Visual Studio`。改为 `Visual Studio 18 2026`（CMake 4.2+ 新增，runner cmake 4.4.5 支持）后全绿。若将来 runner 镜像换成 VS2022，需把生成器名改回 `Visual Studio 17 2022`。
 
 ## 本地对应命令（WSL2 Ubuntu）
 
@@ -63,5 +75,5 @@ g++ -std=c++17 -Wall -Wextra src/hello.cpp -o hello && ./hello
 
 ## 已验证状态
 
-- 示例源码已在 WSL2（GCC 15.2.0, `-Wall -Wextra`）编译并运行通过，输出 `a + b = 4`。
-- CI 工作流文件尚未在 GitHub 实际跑过（本机无 git、未连远程仓库），推送后以 Actions 页面结果为准。
+- 示例源码已在 WSL2 编译并运行通过：GCC 15.2.0 与 Clang 21.1.8（`-Wall -Wextra`）均输出 `a + b = 4`。
+- CI 工作流已在远端实际跑通：GCC、Clang、MSVC 三组 Configure/Build/Test 全部 success（run `aeef0a7`）。
