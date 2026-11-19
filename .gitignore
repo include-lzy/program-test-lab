@@ -1,0 +1,12 @@
+# 构建产物
+build/
+*.o
+*.obj
+*.exe
+*.out
+hello
+cmake-build-*/
+
+# 本地临时
+*.log
+.DS_Store
