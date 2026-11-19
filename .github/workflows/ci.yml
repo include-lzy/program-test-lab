@@ -46,9 +46,7 @@ jobs:
       - name: Windows environment diag
         if: runner.os == 'Windows'
         shell: bash
-        run: |
-          cmake --version
-          cmake -G
+        run: cmake --version
 
       - name: Configure (Windows)
         if: runner.os == 'Windows'
